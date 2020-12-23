@@ -1,0 +1,66 @@
+import copy
+class Node:
+    def __init__(self,st,co,bl,de):
+        self.st = st #state
+        self.co = co #cost
+        self.bl = bl #blank
+        self.de = de #depth
+
+def blank(s):
+    for i in range(3):
+        for j in range(3):
+            if s[i][j] == 9:
+                return i,j
+def check(s):
+    return s == [[1,2,3],[4,5,6],[7,8,9]]
+def Man(s):
+    d = 0
+    for i in range(3):
+        for j in range(3):
+            d += abs(i-(s[i][j]-1)//3) + abs(j-(s[i][j]-1)%3)
+    return d
+def gen(s,listnode):
+    x = s.bl[0]
+    y = s.bl[1]
+    if x != 0:
+        ss = copy.deepcopy(s.st)
+        ss[x][y] = ss[x-1][y]
+        ss[x-1][y] = 9
+        listnode.append(Node(ss,Man(ss)+s.de+1,(x-1,y),s.de+1))
+    if x != 2:
+        ss = copy.deepcopy(s.st)
+        ss[x][y] = ss[x+1][y]
+        ss[x+1][y] = 9
+        listnode.append(Node(ss,Man(ss)+s.de+1,(x+1,y),s.de+1))
+    if y != 0:
+        ss = copy.deepcopy(s.st)
+        ss[x][y] = ss[x][y-1]
+        ss[x][y-1] = 9
+        listnode.append(Node(ss,Man(ss)+s.de+1,(x,y-1),s.de+1))
+    if y != 2:
+        ss = copy.deepcopy(s.st)
+        ss[x][y] = ss[x][y+1]
+        ss[x][y+1] = 9
+        listnode.append(Node(ss,Man(ss)+s.de+1,(x,y+1),s.de+1))
+    listnode.sort(key=lambda x: x.co)
+def loop(s,listnode,successor):
+    if not check(s.st):
+        gen(s,listnode)
+        successor.append(listnode[0])
+        listnode.pop(0)
+        return 0
+    else:
+        return 1
+#Main
+#https://deniz.co/8-puzzle-solver/
+#ss = [[9,1,6],[4,8,5],[3,7,2]] #016485372
+#ss = [[1,2,3],[4,5,6],[7,9,8]] #123456708
+ss = [[1,2,3],[9,8,7],[6,5,4]] #123087654 Depth: 15 Iteration: 106 Expanded nodes: 106 / 106 Frontier nodes: 68 / 69
+s = Node(ss,Man(ss),blank(ss),0)
+listnode = []
+successor = [s]
+while loop(successor[len(successor)-1],listnode,successor) != 1:
+    pass
+for i in range(len(successor)):
+    print(successor[i].st,successor[i].de)
+print(i)
