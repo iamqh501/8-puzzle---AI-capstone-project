@@ -54,17 +54,13 @@ def gen(s,listnode): # Generate next nodes
         ex += 1
         add(listnode, nod(s,x,y,x,y+1))
     listnode.sort(key=lambda x: x.co) #sort nodes by the ascending of cost
-def loop(s,listnode,successor): #Open next node which has lowest cost
-    if not check(s.st):
-        gen(s,listnode)
+def expand(listnode,successor): #Expand next node which has lowest cost
+    gen(successor[-1],listnode)
+    nod = listnode[0]
+    while not add(successor,nod):
+        listnode.pop(0)
         nod = listnode[0]
-        while not add(successor,nod):
-            listnode.pop(0)
-            nod = listnode[0]
-        else: listnode.pop(0)
-        return 0
-    else:
-        return 1
+    else: listnode.pop(0)
 def sol(successor): #Print sequence of moves
     global i
     l = len(successor)
@@ -88,12 +84,12 @@ s = Node(ss,Man(ss),blank(ss),0,[])
 ex = 0 #number of nodes expanded
 listnode = [] #List of next nodes
 successor = [s] #Nodes went through
-while loop(successor[-1],listnode,successor) != 1:
-    pass
+while not check(successor[-1].st):
+    expand(listnode,successor)
 # for i in range(len(successor)):
 #     print(successor[i].st,successor[i].de)
 # print(i)
 sol(successor)
 print('Depth = ',i)
-print('Memory = ',len(listnode)+len(successor))
+print('Memory = ',len(listnode)+len(successor)-1)
 print('Node expanded = ',ex)
