@@ -33,7 +33,7 @@ def nod(s, x, y, X, Y):
     return node
 
 def add(lis, nod):  # add generated node to list and delete repeated state
-    t = 10
+    t = 1
     for i in range(len(lis)):
         if nod.st == lis[i].st:
             if lis[i].co > nod.co:
