@@ -6,7 +6,6 @@ class Node:
         self.bl = bl #blank
         self.de = de #depth
         self.pa = pa #parent
-
 def blank(s): #Find blank(0) position
     for i in range(3):
         for j in range(3):
@@ -21,68 +20,39 @@ def Man(s): #Calculate Mahattan distance
             if s[i][j] != 0:
                 d += abs(i-(s[i][j]-1)//3) + abs(j-(s[i][j]-1)%3)
     return d
-def gen(s,listnode): # Generate next node
+def nod(s,x,y,X,Y):
+    ss = copy.deepcopy(s.st)
+    ss[x][y] = ss[X][Y]
+    ss[X][Y] = 0
+    node = Node(ss, Man(ss) + s.de + 1, (X, Y), s.de + 1, s.st)
+    return node
+def add(list,nod): #add generated node to list and delete repeated state
+    t = 1
+    for i in range(len(list)):
+        if nod.st == list[i].st:
+            if list[i].co > nod.co:
+                list.pop(i)
+            else:
+                t = 0
+            break
+    if t: list.append(nod)
+def gen(s,listnode): # Generate next nodes
     global ex
     x = s.bl[0]
     y = s.bl[1]
     if x != 0:
         ex+=1
-        ss = copy.deepcopy(s.st)
-        ss[x][y] = ss[x-1][y]
-        ss[x-1][y] = 0
-        nod = Node(ss,Man(ss)+s.de+1,(x-1,y),s.de+1,s.st)
-        t = 1
-        for i in range(len(listnode)):
-            if nod.st == listnode[i].st:
-                if listnode[i].co > nod.co:
-                    listnode.pop(i)
-                else: t = 0
-                break
-        if t: listnode.append(nod)
+        add(listnode,nod(s,x,y,x-1,y))
     if x != 2:
         ex += 1
-        ss = copy.deepcopy(s.st)
-        ss[x][y] = ss[x+1][y]
-        ss[x+1][y] = 0
-        nod = Node(ss,Man(ss)+s.de+1,(x+1,y),s.de+1,s.st)
-        t = 1
-        for i in range(len(listnode)):
-            if nod.st == listnode[i].st:
-                if listnode[i].co > nod.co:
-                    listnode.pop(i)
-                else: t = 0
-                break
-        if t: listnode.append(nod)
-
+        add(listnode, nod(s,x,y,x+1,y))
     if y != 0:
         ex += 1
-        ss = copy.deepcopy(s.st)
-        ss[x][y] = ss[x][y-1]
-        ss[x][y-1] = 0
-        nod = Node(ss,Man(ss)+s.de+1,(x,y-1),s.de+1,s.st)
-        t = 1
-        for i in range(len(listnode)):
-            if nod.st == listnode[i].st:
-                if listnode[i].co > nod.co:
-                    listnode.pop(i)
-                else: t = 0
-                break
-        if t: listnode.append(nod)
+        add(listnode, nod(s,x,y,x,y-1))
     if y != 2:
         ex += 1
-        ss = copy.deepcopy(s.st)
-        ss[x][y] = ss[x][y+1]
-        ss[x][y+1] = 0
-        nod = Node(ss,Man(ss)+s.de+1,(x,y+1),s.de+1,s.st)
-        t = 1
-        for i in range(len(listnode)):
-            if nod.st == listnode[i].st:
-                if listnode[i].co > nod.co:
-                    listnode.pop(i)
-                else: t = 0
-                break
-        if t: listnode.append(nod)
-    listnode.sort(key=lambda x: x.co)
+        add(listnode, nod(s,x,y,x,y+1))
+    listnode.sort(key=lambda x: x.co) #sort nodes by the ascending of cost
 def loop(s,listnode,successor):
     if not check(s.st):
         gen(s,listnode)
@@ -103,6 +73,18 @@ def loop(s,listnode,successor):
         return 0
     else:
         return 1
+def sol(successor): #Print sequence of moves
+    global i
+    l = len(successor)
+    t = successor[l - 1]
+    sol = [t]
+    for i in range(l - 1):
+        if t.pa == successor[l - i - 2].st:
+            t = successor[l - i - 2]
+            sol.append(t)
+    sol.reverse()
+    for i in range(len(sol)):
+        print(sol[i].st)
 #Main
 #https://deniz.co/8-puzzle-solver/
 #ss = [[0,1,6],[4,8,5],[3,7,2]] #016485372 Depth: 18 Iteration: 162 Expanded nodes: 163 / 163 Frontier nodes: 103 / 103
@@ -111,25 +93,15 @@ def loop(s,listnode,successor):
 #ss = [[5,2,0],[8,7,6],[4,3,1]] #520876431 Depth: 22 Iteration: 823 Expanded nodes: 823 / 823 Frontier nodes: 473 / 474
 ss = [[0,3,2],[1,7,6],[8,4,5]] #032176845 Depth: 22 Iteration: 1972 Expanded nodes: 1972 / 1972 Frontier nodes: 1138 / 1139
 s = Node(ss,Man(ss),blank(ss),0,[])
-ex = 0 #number of node expanded
-listnode = []
-successor = [s]
-while loop(successor[len(successor)-1],listnode,successor) != 1:
+ex = 0 #number of nodes expanded
+listnode = [] #List of next nodes
+successor = [s] #Nodes went through
+while loop(successor[-1],listnode,successor) != 1:
     pass
 # for i in range(len(successor)):
 #     print(successor[i].st,successor[i].de)
 # print(i)
-
-l = len(successor)
-t = successor[l - 1]
-sol = [t]
-for i in range(l-1):
-    if t.pa == successor[l-i-2].st:
-        t = successor[l - i - 2]
-        sol.append(t)
-sol.reverse()
-for i in range(len(sol)):
-    print(sol[i].st)
-print('depth = ',i)
+sol(successor)
+print('Depth = ',i)
 print('Memory = ',len(listnode)+len(successor))
 print('Node expanded = ',ex)
