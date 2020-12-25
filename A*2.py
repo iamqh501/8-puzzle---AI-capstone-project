@@ -1,29 +1,37 @@
 import copy
 
 class Node:
-    def __init__(self, st, co, bl, de, pa):
-        self.st = st  # state
-        self.co = co  # cost
-        self.bl = bl  # blank
-        self.de = de  # depth
-        self.pa = pa  # parent
+    def __init__(self, state, cost, blank, depth, parent):
+        self.s = state
+        self.c = cost
+        self.d = depth
 
-def blank(s):  # Find blank(0) position
-    for i in range(3):
-        for j in range(3):
-            if s[i][j] == 0:
-                return i, j
+    def get_state(self):
+        return self.s
+
+    def get_coordinate(self,num):
+        for i in range(3):
+            for j in range(3):
+                if self.s[i][j] == num:
+                    return i, j
+
+    def __eq__(self, other):
+        return True if self.s == other.s else False
+
+    def man_distance(self,other):
+        man = 0
+        for i in range(3):
+            for j in range(3):
+                value = self.get_state()[i][j]
+                if value != 0:
+                    x,y = other.get_coordinate(value)
+                    man += abs(i-x) + abs(j-y)
+        return man
+
 
 def check(s):  # Check if the state is solution
     return s == [[1, 2, 3], [4, 5, 6], [7, 8, 0]]
 
-def man(s):  # Calculate Mahattan distance
-    d = 0
-    for i in range(3):
-        for j in range(3):
-            if s[i][j] != 0:
-                d += abs(i-(s[i][j]-1)//3) + abs(j-(s[i][j]-1) % 3)
-    return d
 
 def nod(s, x, y, X, Y):
     ss = copy.deepcopy(s.st)
