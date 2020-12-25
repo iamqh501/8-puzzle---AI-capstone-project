@@ -28,19 +28,31 @@ class Node:
                     man += abs(i-x) + abs(j-y)
         return man
 
+def inversions(s):  # Calculate total inversions of state
+    t = 0
+    for i in range(3):
+        for j in range(3):
+            k = s[i][j]
+            for w in range(j+1,3):
+                if k > s[i][w] and s[i][w]:
+                    t+=1
+            for q in range(i+1,3):
+                for w in range(3):
+                    if k > s[q][w] and s[q][w]:
+                        t+=1
+    return t
 
-def check(s):  # Check if the state is solution
-    return s == [[1, 2, 3], [4, 5, 6], [7, 8, 0]]
-
+def solvable(gstate, s):  # Check if problem is solvable
+    return not (inversions(gstate) - inversions(s)) % 2
 
 def nod(s, x, y, X, Y):
     ss = copy.deepcopy(s.st)
     ss[x][y] = ss[X][Y]
     ss[X][Y] = 0
-    node = Node(ss, man(ss) + s.de + 1, (X, Y), s.de + 1, s.st)
+    node = Node(ss, man(gstate, ss) + s.de + 1, (X, Y), s.de + 1, s.st)
     return node
 
-def add(lis, nod):  # add generated node to list and delete repeated state
+def add(lis, nod):  # Add generated node to list and delete repeated state
     t = 1
     for i in range(len(lis)):
         if nod.st == lis[i].st:
@@ -95,21 +107,25 @@ def sol(successor):  # Print sequence of moves
 # Main
 
 # Test here: https://deniz.co/8-puzzle-solver/
+gstate = [[1, 2, 3], [4, 5, 6], [7, 8, 0]]  # Goal state
 ss = [[0, 1, 6], [4, 8, 5], [3, 7, 2]]  # 016485372 Depth: 18 Iteration: 162 Expanded: 163 / 163 Frontier: 103 / 103
 # ss = [[1, 2, 3], [4, 5, 6], [7, 0, 8]]  # 123456708
 # ss = [[1, 2, 3], [0, 8, 7], [6, 5, 4]]  # 123087654 Depth: 15 Iteration: 106 Expanded: 106 / 106 Frontier: 68 / 69
 # ss = [[5, 2, 0], [8, 7, 6], [4, 3, 1]]  # 520876431 Depth: 22 Iteration: 823 Expanded: 823 / 823 Frontier: 473 / 474
 # ss = [[0, 3, 2], [1, 7, 6], [8, 4, 5]]  # 032176845 Depth: 22 Iteration: 1972 Expanded: 1972 / 1972 Front: 1138 / 1139
 
-s = Node(ss, man(ss), blank(ss), 0, [])  # Initial node
-ex = 0  # number of nodes expanded
-listnode = []  # List of next nodes
-successor = [s]  # Nodes went through
+if solvable(gstate, ss):
+    s = Node(ss, man(gstate, ss), blank(ss), 0, [])  # Initial node
+    ex = 0  # number of nodes expanded
+    listnode = []  # List of next nodes
+    successor = [s]  # Nodes went through
 
-while not check(successor[-1].st):
-    expand(listnode, successor)
+    while not check(successor[-1].st,gstate):
+        expand(listnode, successor)
 
-sol(successor)
-print('Depth = ', successor[-1].de)
-print('Memory = ', len(listnode)+len(successor)-1)
-print('Node expanded = ', ex)
+    sol(successor)
+    print('Depth = ', successor[-1].de)
+    print('Memory = ', len(listnode)+len(successor))
+    print('Node expanded = ', ex)
+else:
+    print('Unsolvable')
