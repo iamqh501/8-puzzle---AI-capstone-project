@@ -14,10 +14,12 @@ def blank(s):  # Find blank(0) position
             if s[i][j] == 0:
                 return i, j
 
-def check(s):  # Check if the state is solution
-    return s == [[1, 2, 3], [4, 5, 6], [7, 8, 0]]
+# def check(s):  # Check if the state is solution
+#     return s == 
+goal = [[1, 2, 3], [4, 5, 6], [7, 8, 0]]
 
-def man(s):  # Calculate Mahattan distance
+def man(s,goal):  # Calculate Mahattan distance
+    return sum(abs(
     d = 0
     for i in range(3):
         for j in range(3):
