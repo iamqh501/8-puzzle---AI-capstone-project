@@ -8,6 +8,23 @@ class Node:
         self.de = de  # depth
         self.pa = pa  # parent
 
+def inversions(s):  # Calculate total inversions of state
+    t = 0
+    for i in range(3):
+        for j in range(3):
+            k = s[i][j]
+            for w in range(j+1,3):
+                if k > s[i][w] and s[i][w]:
+                    t+=1
+            for q in range(i+1,3):
+                for w in range(3):
+                    if k > s[q][w] and s[q][w]:
+                        t+=1
+    return t
+
+def solvable(gstate, s):  # Check if problem is solvable
+    return not (inversions(gstate) - inversions(s)) % 2
+
 def blank(s):  # Find blank(0) position
     for i in range(3):
         for j in range(3):
@@ -101,15 +118,18 @@ ss = [[0, 1, 6], [4, 8, 5], [3, 7, 2]]  # 016485372 Depth: 18 Iteration: 162 Exp
 # ss = [[5, 2, 0], [8, 7, 6], [4, 3, 1]]  # 520876431 Depth: 22 Iteration: 823 Expanded: 823 / 823 Frontier: 473 / 474
 # ss = [[0, 3, 2], [1, 7, 6], [8, 4, 5]]  # 032176845 Depth: 22 Iteration: 1972 Expanded: 1972 / 1972 Front: 1138 / 1139
 
-s = Node(ss, man(gstate, ss), blank(ss), 0, [])  # Initial node
-ex = 0  # number of nodes expanded
-listnode = []  # List of next nodes
-successor = [s]  # Nodes went through
+if solvable(gstate, ss):
+    s = Node(ss, man(gstate, ss), blank(ss), 0, [])  # Initial node
+    ex = 0  # number of nodes expanded
+    listnode = []  # List of next nodes
+    successor = [s]  # Nodes went through
 
-while not check(successor[-1].st,gstate):
-    expand(listnode, successor)
+    while not check(successor[-1].st,gstate):
+        expand(listnode, successor)
 
-sol(successor)
-print('Depth = ', successor[-1].de)
-print('Memory = ', len(listnode)+len(successor))
-print('Node expanded = ', ex)
+    sol(successor)
+    print('Depth = ', successor[-1].de)
+    print('Memory = ', len(listnode)+len(successor))
+    print('Node expanded = ', ex)
+else:
+    print('Unsolvable')
