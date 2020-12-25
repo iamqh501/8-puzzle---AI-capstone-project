@@ -85,12 +85,8 @@ def gen(s, listnode):  # Generate next nodes
 
 def expand(listnode, successor):  # Expand next node which has lowest cost
     gen(successor[-1], listnode)
-    nod = listnode[0]
-    while not add(successor, nod):
-        listnode.pop(0)
-        nod = listnode[0]
-    else:
-        listnode.pop(0)
+    while not add(successor, listnode.pop(0)):
+        pass
 
 def sol(successor):  # Print sequence of moves
     l = len(successor)
