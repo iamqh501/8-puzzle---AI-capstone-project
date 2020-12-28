@@ -8,15 +8,16 @@ class Node:
 
     def get_state(self):
         return self.s
+    def get_depth(self):
+        return self.d
+    def get_cost(self):
+        return self.c
 
     def get_coordinate(self,num):
         for i in range(3):
             for j in range(3):
                 if self.s[i][j] == num:
                     return i, j
-
-    def __eq__(self, other):
-        return True if self.s == other.s else False
 
     def man_distance(self,other):
         man = 0
