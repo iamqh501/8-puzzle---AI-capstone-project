@@ -90,7 +90,8 @@ class Puzzles:
 
 initial_state = [[1, 7, 8], [6, 3, 2], [5, 4, 0]]
 goal = [[1, 2, 3], [4, 5, 6], [7, 8, 0]]
-Puzzles(initial_state, goal).IDDFS()
+# Puzzles(initial_state, goal).IDDFS()
+print('\n'.join(' '.join(str(i) for i in row) for row in goal))
 
 
 
